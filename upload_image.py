@@ -19,7 +19,7 @@ class UploadImageToImgur(object):
         # sorting list of files
 
         # reading last upload screen
-        last_upload_screen_file = open('last_upload_screen_file.txt', 'r')
+        last_upload_screen_file = open('last_upload_screen_file.txt', 'a+')
         for line in last_upload_screen_file:
             last_upload_screen = str(line)
 
@@ -68,15 +68,23 @@ class UploadImageToImgur(object):
         # upload
         for num_screen in range(len(list_of_local_screens)):
 
-            if num_screen // 18 == 0:  # It's cause Imgur have Send limit
-                sleep(2)
+            if num_screen // 15 == 0:  # It's cause Imgur have Send limit
+                sleep(3)
 
-            CLIENT_ID = "7d220f48ce3309b"
-            PATH = "/home/yesspeace/Изображения/screenshots/" + str(list_of_local_screens[num_screen])
-            im = pyimgur.Imgur(CLIENT_ID, access_token=access_token, refresh_token=refresh_token)
-            uploaded_image = im.upload_image(PATH, title="auto_uploaded_by_YessPeace_test")
-            print(uploaded_image.title)
-            print(uploaded_image.link)
+            try:
+                CLIENT_ID = "7d220f48ce3309b"
+                PATH = "/home/yesspeace/Изображения/screenshots/" + str(list_of_local_screens[num_screen])
+                im = pyimgur.Imgur(CLIENT_ID, access_token=access_token, refresh_token=refresh_token)
+                uploaded_image = im.upload_image(PATH, title="auto_uploaded_by_YessPeace_test")
+                print(uploaded_image.title)
+                print(uploaded_image.link)
+
+            except:
+                if len(list_of_local_screens) > 0:
+                    last_upload_screen_file.write(list_of_local_screens[num_screen-1])
+
+                return print('Sorry, but imgur have send limit, so you need to wait')
+
         # upload
 
         last_upload_screen_file = open('last_upload_screen_file.txt', 'w')
